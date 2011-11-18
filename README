@@ -1,0 +1,16 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=3810
+
+Helper to open files referenced in ReStructuredText directives (image/figure/include). If text/file does not exist then will be added/created. Opening is possible with go to position of the file (via line number or pattern options in the directive) or not. Adding handlers of other directives is simple.
+
+So, current version supports ".. include::" with ":start-line:", ":start-after:" options (to jump) and ".. image::", ".. figure::" directives.
+
+Default key bindings are:
+,gf - simple open existent file
+,gF - forced open (create, jump to position in the file)
+
+Settings are:
+RSTO_imgopen - path (+ arguments) to exe file to open image
+RSTO_imgnew - path (+ arguments) to exe file to create nonexistent image
+g:RSTO_handlers - only to add own directives' handlers!
+
+Good luck!
