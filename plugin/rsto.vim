@@ -1,5 +1,5 @@
 " rsto.vim      : Some ReSTructured text routines
-" Version       : 0.0.1
+" Version       : 0.0.2
 " Maintainer    : Yosifov Paul<bulg@ngs.ru>
 " Last modified : 11/16/2011
 " License       : This script is released under the Vim License.
@@ -121,13 +121,21 @@ function! s:RSTOCreateTextForInclude(start_after, end_before)
     if 0 == search(a:start_after)
         " If no such pattern yet, then append
         norm G
-        call append("$", "")
-        call append("$", a:start_after)
-        call append("$", "    TODO...")
-        call append("$", a:end_before)
-        norm G
+        if line("$") != 1
+            " If file not empty
+            call append("$", "")
+            let pos = line("$")
+        else
+            let pos = 0
+        endif
+        call append(pos, a:start_after)
+        let pos += 1
+        call append(pos, "    TODO...")
+        let pos += 1
+        call append(pos, a:end_before)
+        exec "norm " . pos . "G"
         norm zo
-        norm k_
+        norm _
     endif
 endfunction
 
@@ -212,13 +220,16 @@ endfunction
 
 function! g:RSTOEmit(event)
     let block = s:RSTODirectiveBlock()
-    for directive in keys(g:RSTO_handlers)
-        " Try to find handler (from known directives handlers) for this block
-        if block.hdtitle == directive
-            " This line contents current directive
-            return g:RSTO_handlers[directive](a:event, block)
-        endif
-    endfor
+    if !empty(block)
+        for directive in keys(g:RSTO_handlers)
+            " Try to find handler (from known directives handlers) for this block
+            if block.hdtitle == directive
+                " This line contents current directive
+                call g:RSTO_handlers[directive](a:event, block)
+                break
+            endif
+        endfor
+    endif
 endfunction
 
 " Return to the users own compatible-mode setting
